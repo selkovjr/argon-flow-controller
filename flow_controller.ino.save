@@ -1,0 +1,119 @@
+#include <RS485_protocol.h>
+#include <SoftwareSerial.h>
+#include "LibPrintf.h"
+
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH); // LED on
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW); // LED off
+  delay(1000);
+}
+
+
+// const byte ENABLE_PIN = 4;
+// SoftwareSerial rs485 (2, 3);  // receive pin, transmit pin
+//
+//
+// void ftdiWrite (const byte what) {
+//   Serial.write (what);
+// }
+//
+// int ftdiAvailable () {
+//   return Serial.available ();
+// }
+//
+// int ftdiRead () {
+//   return Serial.read ();
+// }
+//
+//
+// void rs485Write (const byte what) {
+//   Serial.println('write callback');
+//   rs485.write (what);
+// }
+//
+// int rs485Available () {
+//   return rs485.available ();
+// }
+//
+// int rs485Read () {
+//   return rs485.read ();
+// }
+//
+//
+//
+// // the setup function runs once when you press reset or power the board
+// void setup() {
+//   Serial.begin(9600);
+//   rs485.begin(38400);
+//
+//   // initialize digital pin LED_BUILTIN as an output.
+//   pinMode(LED_BUILTIN, OUTPUT);
+//
+//   // DE / RE Controling pin of RS-485
+//   pinMode(ENABLE_PIN, OUTPUT);
+// }
+//
+// // send a byte complemented, repeated
+// // only values sent would be (in hex):
+// //   0F, 1E, 2D, 3C, 4B, 5A, 69, 78, 87, 96, A5, B4, C3, D2, E1, F0
+// void sendComplemented2 (WriteCallback fSend, const byte what) {
+//   byte c;
+//
+//   // first nibble
+//   c = what >> 4;
+//   fSend ((c << 4) | (c ^ 0x0F));
+//
+//   // second nibble
+//   c = what & 0x0F;
+//   fSend ((c << 4) | (c ^ 0x0F));
+//
+// }
+//
+// // Send a Fujikin message of "length" bytes (max 255) to other end
+// void sendFujikinMessage (WriteCallback fSend, const byte * data, const byte length) {
+//   for (byte i = 0; i < length; i++) {
+//     sendComplemented2 (fSend, data [i]);
+//   }
+// }
+//
+//
+//
+// void loop() {
+//   digitalWrite(LED_BUILTIN, LOW); // LED off
+//
+//   // assemble message for product name retrieval
+//   byte msg [] = {
+//      0x21,    // Default Fujikin MAC ID
+//      0x02,    // STX
+//      0x80,    // Read command code
+//      0x03,    // Packet length
+//      0x01,    // Class ID
+//      0x01,    // Instance ID
+//      0x07,    // Attribute ID
+//      0x00,    // Padding (no data)
+//      0x8e     // Checksum
+//   };
+//
+//   // send to Fujikin
+//   digitalWrite (ENABLE_PIN, HIGH);    // enable sending
+//   sendFujikinMessage (rs485Write, msg, sizeof msg);
+//   digitalWrite (ENABLE_PIN, LOW);     // disable sending
+//
+//   delay(1);
+//
+//   // receive response
+//   byte buf [10] = {0};
+//   byte received = recvMsg (rs485Available, rs485Read, buf, sizeof buf);
+//   printf ("received %d\n", received);
+//   digitalWrite (LED_BUILTIN, received == 0);  // turn on LED if error
+//
+//   printf ("buf %d, %d\n", buf[0], buf[1]);
+//
+//   delay(1000);
+// }
