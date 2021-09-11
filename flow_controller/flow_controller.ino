@@ -10,8 +10,7 @@ void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
 
-  // DE / RE Controling pin of RS-485
-  pinMode(TX_ENABLE_PIN, OUTPUT);
+  Fujikin::setup();
 }
 
 
@@ -20,76 +19,76 @@ void loop() {
   delay(5);
   digitalWrite(LED_BUILTIN, LOW); // LED off
 
-  sendFujikinQuery("Product Name");
-  if (receivedFujikinResponse()) {
-    printf("product name: %s\n", recvStringBuf);
+  Fujikin::sendFujikinQuery("Product Name");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("product name: %s\n", Fujikin::recvStringBuf);
   }
-  sendFujikinQuery("Manufacturer Model Number");
-  if (receivedFujikinResponse()) {
-    printf("model number: %s\n", recvStringBuf);
+  Fujikin::sendFujikinQuery("Manufacturer Model Number");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("model number: %s\n", Fujikin::recvStringBuf);
   }
-  sendFujikinQuery("Gas Identifier");
-  if (receivedFujikinResponse()) {
-    printf("gas: %s\n", recvStringBuf);
+  Fujikin::sendFujikinQuery("Gas Identifier");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("gas: %s\n", Fujikin::recvStringBuf);
   }
-  sendFujikinQuery("nProcess Gases");
-  if (receivedFujikinResponse()) {
-    printf("gases known: %d\n", decodeUint8Buffer());
+  Fujikin::sendFujikinQuery("nProcess Gases");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("gases known: %d\n", Fujikin::decodeUint8Buffer());
   }
-  sendFujikinQuery("Gas CF");
-  if (receivedFujikinResponse()) {
-    printf("gas conversion factor: %f\n", decodeFloatBuffer());
+  Fujikin::sendFujikinQuery("Gas CF");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("gas conversion factor: %f\n", Fujikin::decodeFloatBuffer());
   }
 
   byte b[1] = {0x01};
-  sendFujikinCommand("Default Control Mode", b, 1);
-  if (receivedFujikinCommandAck()) {
+  Fujikin::sendFujikinCommand("Default Control Mode", b, 1);
+  if (Fujikin::receivedFujikinCommandAck()) {
     printf("default control is digital\n");
   }
   b[0] = {0x01};
-  sendFujikinCommand("Freeze Follow", b, 1);
-  if (receivedFujikinCommandAck()) {
+  Fujikin::sendFujikinCommand("Freeze Follow", b, 1);
+  if (Fujikin::receivedFujikinCommandAck()) {
     printf("freeze follow disabled\n");
   }
 
-  sendFujikinQuery("Freeze Follow");
-  if (receivedFujikinResponse()) {
-    printf("freeze follow: %x\n", decodeUint8Buffer());
+  Fujikin::sendFujikinQuery("Freeze Follow");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("freeze follow: %x\n", Fujikin::decodeUint8Buffer());
   }
 
 //  byte w[2] = {0x00, 0x60};
-//  sendFujikinCommand("Setpoint", w, 2);
-//  if (receivedFujikinCommandAck()) {
+//  Fujikin::sendFujikinCommand("Setpoint", w, 2);
+//  if (Fujikin::receivedFujikinCommandAck()) {
 //    printf("setpoint sent\n");
 //  }
 
-  sendFujikinQuery("FM Status");
-  if (receivedFujikinResponse()) {
-    printf("flowmeter status: %d\n", decodeUint8Buffer());
+  Fujikin::sendFujikinQuery("FM Status");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("flowmeter status: %d\n", Fujikin::decodeUint8Buffer());
   }
-  sendFujikinQuery("FC Status");
-  if (receivedFujikinResponse()) {
-    printf("controller status: %d\n", decodeUint8Buffer());
+  Fujikin::sendFujikinQuery("FC Status");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("controller status: %d\n", Fujikin::decodeUint8Buffer());
   }
-  sendFujikinQuery("Valve Status");
-  if (receivedFujikinResponse()) {
-    printf("valve status: %d\n", decodeUint8Buffer());
+  Fujikin::sendFujikinQuery("Valve Status");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("valve status: %d\n", Fujikin::decodeUint8Buffer());
   }
-  sendFujikinQuery("Valve Ramp Time");
-  if (receivedFujikinResponse()) {
-    printf("valve ramp time: %d\n", decodeUint32Buffer());
+  Fujikin::sendFujikinQuery("Valve Ramp Time");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("valve ramp time: %d\n", Fujikin::decodeUint32Buffer());
   }
-  sendFujikinQuery("Setpoint");
-  if (receivedFujikinResponse()) {
-    printf("setpoint: %x\n", decodeUint16Buffer());
+  Fujikin::sendFujikinQuery("Setpoint");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("setpoint: %x\n", Fujikin::decodeUint16Buffer());
   }
-  sendFujikinQuery("Filtered Setpoint");
-  if (receivedFujikinResponse()) {
-    printf("filtered setpoint: %x\n", decodeUint16Buffer());
+  Fujikin::sendFujikinQuery("Filtered Setpoint");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("filtered setpoint: %x\n", Fujikin::decodeUint16Buffer());
   }
-  sendFujikinQuery("Indicated Flow");
-  if (receivedFujikinResponse()) {
-    printf("indicated flow: %x\n", decodeUint16Buffer());
+  Fujikin::sendFujikinQuery("Indicated Flow");
+  if (Fujikin::receivedFujikinResponse()) {
+    printf("indicated flow: %x\n", Fujikin::decodeUint16Buffer());
   }
 
   printf("----\n");
