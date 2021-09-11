@@ -2,11 +2,6 @@
 
 
 /*
-** Max485 wiring: Transmit Enable to D4
-*/
-#define TX_ENABLE_PIN 4
-
-/*
 ** Default network address (we won't change it)
 */
 #define FUJIKIN_MAC            0x21
@@ -58,8 +53,13 @@
 
 
 namespace Fujikin {
-  // Command definitions
-  typedef struct {
+
+  /*
+  ** Command definitions
+  */
+
+  // Command data (each row in the comdata[] table)
+  typedef struct comspec {
     char *name;
     byte access;
     byte storage;
@@ -69,7 +69,8 @@ namespace Fujikin {
     byte dt;
   } Command;
 
-#define NCOMMANDS 78
+  // Copied from the Fujikin Protocol document
+  #define NCOMMANDS 78
   const Command comdata[NCOMMANDS] = {
     { "Vender ID",                              R, NA,  IDENTITY_CLASS,        INST1, 0x01, UINT16 },
     { "Product Type",                           R, NA,  IDENTITY_CLASS,        INST1, 0x02, UINT16 },
@@ -154,6 +155,10 @@ namespace Fujikin {
     { "Valve Voltage",                          R, NA,  VALVE_DRIVER_CLASS,    INST1, 0xb6, UINT16 }
   };
 
+
+  /*
+  ** Global transmit / receive buffers
+  */
 
   // transmit buffer
   byte outBuf [20] = {0};
