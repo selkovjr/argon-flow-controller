@@ -43,7 +43,7 @@ void loop() {
   byte b[1] = {0x01};
   Fujikin::sendCommand("Default Control Mode", b, 1);
   if (Fujikin::receivedCommandAck()) {
-    printf("default control is digital\n");
+    printf("default control set to digital\n");
   }
   b[0] = {0x01};
   Fujikin::sendCommand("Freeze Follow", b, 1);

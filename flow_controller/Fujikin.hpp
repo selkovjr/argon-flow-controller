@@ -46,30 +46,51 @@ namespace Fujikin {
   // TEXT response payload
   extern char recvStringBuf[100];  // used in the caller; wrap access in a finction if feasible
 
+
   // Sets output mode on the Arduino pin controlling Transmit Enable on Max485.
-  // The pin is defined in Fujickin.cpp. Exposed to allow one-time
-  // initialization in the main setup() function.
+  // Exposed in the interface to allow one-time initialization in the main setup()
+  // function.
   void setUpMax485();
 
-  // Sends a named write/state change command to Fujikin and exits
+
+  // Sends a named write/state-change command to Fujikin and exits
   // immediately. This function is non-blocking; however, a subsequent
   // wait loop is necessary for catching ACK or NAK from Fujikin, which
-  // arrives within a somewhat variable interval not exceeding 1ms.
+  // arrives within 1ms.
   //
-  // The wait loop runs inside receivedCommandAck(), below.
+  // The wait loop runs inside receivedCommandAck().
+  //
+  // Example:
+  //   byte b[1] = {0x01};
+  //   Fujikin::sendCommand("Freeze Follow", b, 1);
+  //   if (Fujikin::receivedCommandAck()) {
+  //     printf("freeze follow disabled\n");
+  //   }
+  //
   void sendCommand(char *name, byte *data, int length);
 
+
   // If the receiver is not immediately available, this function waits for 2ms
-  // before reading a single-byte response. It returns 1 for ACK and 0 for all
-  // other responses.
+  // before reading a single-byte response.
+  //
+  // Return: 1 for ACK, 0 for all other responses.
   int receivedCommandAck(void);
 
+
   // Sends a named read command to Fujikin and exits immediately. A subsequent
-  // call to receivedResponse() (below) checks for ACK and consumes the response,
-  // from the UART, deopsiting it into a global receive buffer. That buffer
-  // is then parsed by one of a set of accessor methods, appropriate for the data
-  // type of the response.
+  // call to receivedResponse() will check for ACK and consume the response
+  // from the UART, deopsiting it into a private receive buffer. That buffer
+  // is then parsed by one of a set of accessor methods, appropriate for the
+  // data type of the response.
+  //
+  // Example:
+  //   Fujikin::sendQuery("Gas CF");
+  //   if (Fujikin::receivedResponse()) {
+  //     printf("gas conversion factor: %f\n", Fujikin::decodeFloatBuffer());
+  //   }
+  //
   void sendQuery(char *name);
+
 
   // Waits for the ACK + response sequence and stores the response as a raw buffer
   // and as a string. The string buffer recvStringBuf is available for immediate
@@ -77,20 +98,23 @@ namespace Fujikin {
   // exposed as a global namespace member, scoped as Fujikin::recvStringBuf.
   //
   // If the expected response is not a string, it needs to be parsed out of
-  // the receive buffer with one of the methods listed below.
+  // the internal receive buffer with one of the decode methods listed below.
   //
-  // This method returns 0 when the query fails.
+  // Return: 1 when the query succeeds, 0 when it fails.
   int receivedResponse(void);
 
 
   // Extract a single byte from the receive buffer
   byte decodeUint8Buffer(void);
 
+
   // Parse a 16-bit word from the receive buffer
   uint16_t decodeUint16Buffer(void);
 
+
   // Parse a 32-bit word from the receive buffer
   uint32_t decodeUint32Buffer(void);
+
 
   // Parse a floating-point number from the receive buffer
   float decodeFloatBuffer(void);

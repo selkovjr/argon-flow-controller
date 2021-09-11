@@ -160,14 +160,11 @@ namespace Fujikin {
   ** Global transmit / receive buffers
   */
 
-  // transmit buffer
+  // Transmit buffer
   byte outBuf [20] = {0};
 
-  // response buffer
+  // Response buffer
   byte recvBuf [100] = {0};
-
-  // TEXT response payload
-  char recvStringBuf [100] = {0};
 
   // UINT8 response payload
   byte recvUint8;
@@ -185,9 +182,11 @@ namespace Fujikin {
   } recvFloat;
 
 
-  void setUpMax485() {
-    pinMode(TX_ENABLE_PIN, OUTPUT);  // DE / RE Controling pin of RS-485
-  }
+  // ------------------------------------------------------------------
+  //
+  //                        P R I V A T E
+  //
+  // ------------------------------------------------------------------
 
   // Looks up command data by name. Provides a crude human-readable intreface
   // to Fujikin protocol buffers. The definitions are stored in comdata[] above.
@@ -201,28 +200,55 @@ namespace Fujikin {
     return {"unknown", 0, 0, 0, 0, 0, 0};
   }
 
-  void sendQuery(char *name) {
+
+  // ------------------------------------------------------------------
+  //
+  //                      I N T E R F A C E
+  //
+  // ------------------------------------------------------------------
+
+  // TEXT response payload. Copied out of recvBuf.
+  char recvStringBuf [100] = {0};
+
+  // Sets output mode on the Arduino pin controlling Transmit Enable on Max485.
+  // Exposed in the interface to allow one-time initialization in the main setup()
+  // function.
+  void setUpMax485() {
+    pinMode(TX_ENABLE_PIN, OUTPUT);
+  }
+
+  // Sends a named write/state-change command to Fujikin and exits
+  // immediately. This function is non-blocking; however, a subsequent
+  // wait loop is necessary for catching ACK or NAK from Fujikin, which
+  // arrives within a somewhat variable interval not exceeding 1ms.
+  //
+  // The wait loop runs inside receivedCommandAck(), below.
+  //
+  void sendCommand(char *name, byte *data, int length) {
     Command spec = comspec(name);
 
-    if (spec.access == W) {
-      printf("sendQuery: '%s' is a write-only command\n", spec.name);
+    if (spec.access == R) {
+      printf("sendCommand: '%s' is a write-only command\n", spec.name);
       return;
     }
 
     byte bufSize = 0;
-    outBuf[0] = FUJIKIN_MAC;   ++bufSize;
-    outBuf[1] = STX;           ++bufSize;
-    outBuf[2] = READ_COMMAND;  ++bufSize;
-    outBuf[3] = 0x03;          ++bufSize;  // packet length
-    outBuf[4] = spec.cls;      ++bufSize;
-    outBuf[5] = spec.inst;     ++bufSize;
-    outBuf[6] = spec.attr;     ++bufSize;
+    outBuf[bufSize++] = FUJIKIN_MAC;
+    outBuf[bufSize++] = STX;
+    outBuf[bufSize++] = WRITE_COMMAND;
+    outBuf[bufSize++] = length + 3;   // packet length: data + class, instance, and attribute
+    outBuf[bufSize++] = spec.cls;
+    outBuf[bufSize++] = spec.inst;
+    outBuf[bufSize++] = spec.attr;
+
+    for (int i = 0; i < length; i++) {
+      outBuf[bufSize++] = data[i];
+    }
+    outBuf[bufSize++] = 0x00; // padding (end of data)
 
     byte checksum = 0;
     for (int i = 1; i < bufSize; i++) checksum += outBuf[i];
-
-    outBuf[7] = 0x00;          ++bufSize;  // padding (end of data)
-    outBuf[8] = checksum;      ++bufSize;
+    outBuf[bufSize++] = checksum;
 
     digitalWrite (TX_ENABLE_PIN, HIGH);  // enable sending
     Serial1.write(outBuf, bufSize);
@@ -233,11 +259,16 @@ namespace Fujikin {
   }
 
 
+  // If the receiver is not immediately available, this function waits for 2ms
+  // before reading a single-byte response.
+  //
+  // Return: 1 for ACK and 0 for all other responses.
+  //
   int receivedCommandAck(void) {
     if (Serial1.available()) {
       byte b = Serial1.read();
       if (b == 0x06) {
-        delay (2);
+        delay (2);  // Fujikin promises ACK / NAK within 1ms
         if (Serial1.available()) {
           byte b = Serial1.read();
           if (b == 0x06) {
@@ -275,31 +306,33 @@ namespace Fujikin {
   }
 
 
-  void sendCommand(char *name, byte *data, int length) {
+  // Sends a named read command to Fujikin and exits immediately. A subsequent
+  // call to receivedResponse() checks for ACK and consumes the response from
+  // the UART, deopsiting it into the namespace member recvBuf. That buffer will
+  // be parsed by one of a set of accessor methods, appropriate for the data type
+  // of the response.
+  void sendQuery(char *name) {
     Command spec = comspec(name);
 
-    if (spec.access == R) {
-      printf("sendCommand: '%s' is a write-only command\n", spec.name);
+    if (spec.access == W) {
+      printf("sendQuery: '%s' is a write-only command\n", spec.name);
       return;
     }
 
     byte bufSize = 0;
-    outBuf[bufSize++] = FUJIKIN_MAC;
-    outBuf[bufSize++] = STX;
-    outBuf[bufSize++] = WRITE_COMMAND;
-    outBuf[bufSize++] = length + 3;    // packet length: data + class, instance, and attribute
-    outBuf[bufSize++] = spec.cls;
-    outBuf[bufSize++] = spec.inst;
-    outBuf[bufSize++] = spec.attr;
-
-    for (int i = 0; i < length; i++) {
-      outBuf[bufSize++] = data[i];
-    }
-    outBuf[bufSize++] = 0x00;         // padding (end of data)
+    outBuf[0] = FUJIKIN_MAC;   ++bufSize;
+    outBuf[1] = STX;           ++bufSize;
+    outBuf[2] = READ_COMMAND;  ++bufSize;
+    outBuf[3] = 0x03;          ++bufSize;  // packet length
+    outBuf[4] = spec.cls;      ++bufSize;
+    outBuf[5] = spec.inst;     ++bufSize;
+    outBuf[6] = spec.attr;     ++bufSize;
 
     byte checksum = 0;
     for (int i = 1; i < bufSize; i++) checksum += outBuf[i];
-    outBuf[bufSize++] = checksum;
+
+    outBuf[7] = 0x00;          ++bufSize;  // padding (end of data)
+    outBuf[8] = checksum;      ++bufSize;
 
     digitalWrite (TX_ENABLE_PIN, HIGH);  // enable sending
     Serial1.write(outBuf, bufSize);
@@ -310,6 +343,18 @@ namespace Fujikin {
   }
 
 
+
+  // Waits for the ACK followed by the response and stores the response in
+  // recvBuf. It also copies the payload from each response to recvStringBuf,
+  // whether the response type is TEXT or not. The string buffer recvStringBuf
+  // is available for immediate consumption by the caller as soon as
+  // receivedResponse() returns 1.
+  //
+  // If the expected response is not of the TEXT type, it needs to be parsed out
+  // of the raw buffer recvBuf by calling one of the decoder methods defined at
+  // the end of this module.
+  //
+  // Return: 1 when the query succeeds, 0 when it fails.
   int receivedResponse(void) {
     byte* p = recvBuf;
     int i;
@@ -373,14 +418,19 @@ namespace Fujikin {
   }
 
 
+  // Extract a single payload byte from the receive buffer
   byte decodeUint8Buffer(void) {
     return recvBuf[7];
   }
 
+
+  // Parse a 16-bit word from the receive buffer.
   uint16_t decodeUint16Buffer(void) {
     return (uint16_t)recvBuf[7] + 256 * (uint16_t)recvBuf[8];
   }
 
+
+  // Parse a 32-bit word from the receive buffer
   uint32_t decodeUint32Buffer(void) {
     for (int i = 0; i < 4; i++) {
       recvUint32.b[i] = recvBuf[7 + i];
@@ -388,6 +438,8 @@ namespace Fujikin {
     return recvUint32.val;
   }
 
+
+  // Parse a floating-point number from the receive buffer
   float decodeFloatBuffer(void) {
     for (int i = 0; i < 4; i++) {
       recvFloat.b[i] = recvBuf[7 + i];
