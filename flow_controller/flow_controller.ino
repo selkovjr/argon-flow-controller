@@ -5,12 +5,12 @@
 // the setup function runs once when you press reset or power the board
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(38400, SERIAL_8N1);  // SERIAL_8N1 is the default
+  Serial1.begin(38400, SERIAL_8N1);  // SERIAL_8N1 is the default. It works with Fujikin.
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
 
-  Fujikin::setup();
+  Fujikin::setUpMax485();
 }
 
 
