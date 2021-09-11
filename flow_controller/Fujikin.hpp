@@ -3,11 +3,26 @@
 #include "Arduino.h"
 #include "LibPrintf.h"
 
+/*
+** Default network address (we won't change it)
+*/
 #define FUJIKIN_MAC            0x21
+
+/*
+** Serial start of text
+*/
 #define STX                    0x02
+
+
+/*
+** Fujikin protocol identifiers
+*/
+
+//   1. Direction
 #define READ_COMMAND           0x80
 #define WRITE_COMMAND          0x81
 
+//   2. Message class
 #define IDENTITY_CLASS         0x01
 #define NETWORK_CLASS          0x03
 #define DEVICE_MANAGER_CLASS   0x64
@@ -17,17 +32,21 @@
 #define FLOW_CONTROLLER_CLASS  0x69
 #define VALVE_DRIVER_CLASS     0x6a
 
-#define INST0 0x00
+//   3. Instance
+#define INST0 0x00  // Only two commands are INST0; the rest are INST1
 #define INST1 0x01
 
+//   4. Attribute access
 #define R  0x01
 #define W  0x02
 #define RW 0x03
 
+//   5. Attribute storage
 #define NA  0x00   // not applicable
 #define V   0x01   // volatile
 #define NV  0x02   // non-volatile
 
+//   5. Attribute type
 #define UINT8  0x01
 #define UINT16 0x02
 #define UINT32 0x04
