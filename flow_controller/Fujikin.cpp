@@ -1,5 +1,11 @@
 #include "Fujikin.hpp"
 
+
+/*
+** Max485 wiring: Transmit Enable to D4
+*/
+#define TX_ENABLE_PIN 4
+
 /*
 ** Default network address (we won't change it)
 */
@@ -61,10 +67,10 @@ namespace Fujikin {
     byte inst;
     byte attr;
     byte dt;
-  } FujikinCommand;
+  } Command;
 
 #define NCOMMANDS 78
-  const FujikinCommand comdata[NCOMMANDS] = {
+  const Command comdata[NCOMMANDS] = {
     { "Vender ID",                              R, NA,  IDENTITY_CLASS,        INST1, 0x01, UINT16 },
     { "Product Type",                           R, NA,  IDENTITY_CLASS,        INST1, 0x02, UINT16 },
     { "Product Code",                           R, NA,  IDENTITY_CLASS,        INST1, 0x03, UINT16 },
@@ -180,7 +186,7 @@ namespace Fujikin {
 
   // Looks up command data by name. Provides a crude human-readable intreface
   // to Fujikin protocol buffers. The definitions are stored in comdata[] above.
-  FujikinCommand comspec(char *name) {
+  Command comspec(char *name) {
     for (int i = 0; i < NCOMMANDS; i++) {
       if (strcmp(comdata[i].name, name) == 0) {
         return comdata[i];
@@ -190,11 +196,11 @@ namespace Fujikin {
     return {"unknown", 0, 0, 0, 0, 0, 0};
   }
 
-  void sendFujikinQuery(char *name) {
-    FujikinCommand spec = comspec(name);
+  void sendQuery(char *name) {
+    Command spec = comspec(name);
 
     if (spec.access == W) {
-      printf("sendFujikinQuery: '%s' is a write-only command\n", spec.name);
+      printf("sendQuery: '%s' is a write-only command\n", spec.name);
       return;
     }
 
@@ -222,7 +228,7 @@ namespace Fujikin {
   }
 
 
-  int receivedFujikinCommandAck(void) {
+  int receivedCommandAck(void) {
     if (Serial1.available()) {
       byte b = Serial1.read();
       if (b == 0x06) {
@@ -264,11 +270,11 @@ namespace Fujikin {
   }
 
 
-  void sendFujikinCommand(char *name, byte *data, int length) {
-    FujikinCommand spec = comspec(name);
+  void sendCommand(char *name, byte *data, int length) {
+    Command spec = comspec(name);
 
     if (spec.access == R) {
-      printf("sendFujikinCommand: '%s' is a write-only command\n", spec.name);
+      printf("sendCommand: '%s' is a write-only command\n", spec.name);
       return;
     }
 
@@ -299,7 +305,7 @@ namespace Fujikin {
   }
 
 
-  int receivedFujikinResponse(void) {
+  int receivedResponse(void) {
     byte* p = recvBuf;
     int i;
 
