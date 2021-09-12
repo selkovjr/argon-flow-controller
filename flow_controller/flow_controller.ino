@@ -1,6 +1,6 @@
 #include "LibPrintf.h"
-#include "Fujikin.hpp"
-#include "Display.hpp"
+#include "Fujikin.h"
+#include "Display.h"
 
 
 // the setup function runs once when you press reset or power the board

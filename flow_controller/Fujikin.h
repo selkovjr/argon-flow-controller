@@ -4,7 +4,7 @@
 #include "LibPrintf.h"
 
 /*
-** Fujikin.hpp
+** Fujikin.h
 **
 
 ** This module interacts with a Fujikin mass flow controller, FCS-1000, and
