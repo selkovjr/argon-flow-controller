@@ -8,16 +8,19 @@
 
 extern const uint16_t computer_icon[];
 
-// screen dimensions
+// Screen dimensions
 #define SCREEN_WIDTH 128 //pixel width
 #define SCREEN_HEIGHT 128 //pixel height
 
-// pin definitions
+// The only pin assignments that work with hardware SPI on a Mega.
+// Other, more intuitive assignments based on pin labels work in the
+// "software" SPI mode but not in the hardware mode.
+//
 #define MOSI_PIN 51 //defines master-out slave-in SDA pin (11 in Uno)
 #define SCLK_PIN 52 //defines slave clock pin (13 in Uno)
-#define CS_PIN   11 //defines chip select pin
-#define DC_PIN   10 //defines master-in slave-out pin
-#define RST_PIN   8 //defines reset pin
+#define CS_PIN   11 //defines chip select pin (10 in Uno)
+#define DC_PIN   10 //defines master-in slave-out pin (7 in Uno)
+#define RST_PIN   8 //defines reset pin (same as in Uno)
 
 // Colour definitions
 #define BLACK           0x0000
