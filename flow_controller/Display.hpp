@@ -1,12 +1,12 @@
 #include "SPI.h"              // Includes library for SPI communication of display
 #include "Adafruit_GFX.h"     // Includes core graphics library
 #include "Adafruit_SSD1351.h" // Includes hardware specific library
+#include <Fonts/FreeSansOblique12pt7b.h>
 
-#include "LibPrintf.h"
 
-#include "computer-icon.c"
+#include "face-icon.c"
 
-extern const uint16_t computer_icon[];
+extern const uint16_t face_icon[];
 
 // Screen dimensions
 #define SCREEN_WIDTH 128 //pixel width
@@ -16,11 +16,11 @@ extern const uint16_t computer_icon[];
 // Other, more intuitive assignments based on pin labels work in the
 // "software" SPI mode but not in the hardware mode.
 //
-#define MOSI_PIN 51 //defines master-out slave-in SDA pin (11 in Uno)
-#define SCLK_PIN 52 //defines slave clock pin (13 in Uno)
-#define CS_PIN   11 //defines chip select pin (10 in Uno)
-#define DC_PIN   10 //defines master-in slave-out pin (7 in Uno)
-#define RST_PIN   8 //defines reset pin (same as in Uno)
+#define MOSI_PIN 51 // master-out slave-in SDA pin (11 in Uno)
+#define SCLK_PIN 52 // slave clock pin (13 in Uno)
+#define CS_PIN   11 // chip select pin (10 in Uno)
+#define DC_PIN   10 // master-in slave-out pin (7 in Uno)
+#define RST_PIN   8 // reset pin (same as in Uno)
 
 // Colour definitions
 #define BLACK           0x0000
@@ -44,13 +44,18 @@ namespace Display {
 
 
   void setup() {
+    display.setFont(&FreeSansOblique12pt7b);
     display.begin();
     display.setRotation(2);
     display.fillScreen(BLACK);
-    printf("SS: %d, SCK: %d, MOSI: %d\n", SS, SCK, MOSI);
   }
 
   void draw() {
-    display.drawRGBBitmap(40, 40, computer_icon, 48, 48);
+    display.setTextColor(YELLOW);
+    display.setCursor(10, 30);
+    display.print("hello ");
+    display.println("there");
+
+    display.drawRGBBitmap(40, 50, face_icon, 48, 48);
   }
 }
