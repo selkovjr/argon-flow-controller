@@ -1,6 +1,7 @@
 #include "LibPrintf.h"
 #include "Fujikin.h"
 #include "Display.h"
+#include "Trigger.h"
 
 
 // the setup function runs once when you press reset or power the board
@@ -14,6 +15,7 @@ void setup() {
   Fujikin::setUpMax485();
 
   Display::setup();
+  Trigger::setup();
 }
 
 
@@ -96,6 +98,8 @@ void loop() {
     printf("indicated flow: %x\n", Fujikin::decodeUint16Buffer());
   }
 
+  digitalWrite(13, digitalRead(2));
+  printf("Pin 2: %d\n", digitalRead(2));
   printf("----\n");
 
   delay(1000);
