@@ -13,11 +13,11 @@ extern const uint16_t computer_icon[];
 #define SCREEN_HEIGHT 128 //pixel height
 
 // pin definitions
-#define SCLK_PIN 52 //defines slave clock pin (13 in Uno)
 #define MOSI_PIN 51 //defines master-out slave-in SDA pin (11 in Uno)
+#define SCLK_PIN 52 //defines slave clock pin (13 in Uno)
+#define CS_PIN   11 //defines chip select pin
+#define DC_PIN   10 //defines master-in slave-out pin
 #define RST_PIN   8 //defines reset pin
-#define DC_PIN   50 //defines master-in slave-out pin
-#define CS_PIN   21 //defines chip select pin
 
 // Colour definitions
 #define BLACK           0x0000
@@ -33,13 +33,18 @@ extern const uint16_t computer_icon[];
 
 
 namespace Display {
-  // Adafruit_SSD1351 display = Adafruit_SSD1351(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, CS_PIN, DC_PIN, RST_PIN);
-  Adafruit_SSD1351 display = Adafruit_SSD1351(SCREEN_WIDTH, SCREEN_HEIGHT, CS_PIN, DC_PIN, MOSI_PIN, SCLK_PIN, RST_PIN);
+  // Software SPI mode (slow)
+  // Adafruit_SSD1351 display = Adafruit_SSD1351(SCREEN_WIDTH, SCREEN_HEIGHT, CS_PIN, DC_PIN, MOSI_PIN, SCLK_PIN, RST_PIN);
+
+  // Hardware SPI using SPIClass
+  Adafruit_SSD1351 display = Adafruit_SSD1351(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, CS_PIN, DC_PIN, RST_PIN);
+
 
   void setup() {
     display.begin();
     display.setRotation(2);
     display.fillScreen(BLACK);
+    printf("SS: %d, SCK: %d, MOSI: %d\n", SS, SCK, MOSI);
   }
 
   void draw() {
