@@ -2,6 +2,7 @@
 #include "Fujikin.h"
 #include "Display.h"
 #include "Trigger.h"
+#include "UserInput.h"
 
 
 // the setup function runs once when you press reset or power the board
@@ -16,6 +17,7 @@ void setup() {
 
   Display::setup();
   Trigger::setup();
+  UserInput::setup();
 }
 
 
