@@ -9,29 +9,15 @@ namespace UserInput {
     void setup() {
       pinMode(ROTARY_PIN_A, INPUT);
       pinMode(ROTARY_PIN_B, INPUT);
-      attachInterrupt(digitalPinToInterrupt(ROTARY_PIN_A), activityA, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(ROTARY_PIN_B), activityB, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(ROTARY_PIN_A), activityA, FALLING);
     }
 
     void activityA() {
       if (digitalRead(ROTARY_PIN_B)) {
-        printf("---------- pin B 1 ----------\n");
-        digitalWrite(13, HIGH);
+        printf("CCW\n");
       }
       else {
-        printf("---------- pin B 0 ----------\n");
-        digitalWrite(13, LOW);
-      }
-    }
-
-    void activityB() {
-      if (digitalRead(ROTARY_PIN_A)) {
-        printf("---------- pin A 1 ----------\n");
-        digitalWrite(13, HIGH);
-      }
-      else {
-        printf("---------- pin A 0 ----------\n");
-        digitalWrite(13, LOW);
+        printf("CW\n");
       }
     }
   }
@@ -44,18 +30,15 @@ namespace UserInput {
 
     void pushSwitchActivity() {
       if (digitalRead(PUSH_SW_PIN)) {
-        printf("---------- Push Switch 1 ----------\n");
-        digitalWrite(13, HIGH);
+        printf("---- Push Switch Up   ----------\n");
       }
       else {
-        printf("---------- Push Switch 0 ----------\n");
-        digitalWrite(13, LOW);
+        printf("---- Push Switch Down ----------\n");
       }
     }
   }
 
   void setup() {
-    pinMode(13, OUTPUT);  // On-board LED
     PushSwitch::setup();
     Rotary::setup();
   }
