@@ -8,9 +8,9 @@
       "type": "enumItem",
       "item": {
         "enumEntries": [
-          "Meter",
+          "Interceptor",
           "Alarm",
-          "Interceptor"
+          "Meter"
         ],
         "name": "Mode",
         "variableName": "Mode",

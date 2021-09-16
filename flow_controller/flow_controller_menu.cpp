@@ -58,9 +58,9 @@ RENDERING_CALLBACK_NAME_INVOKE(fnSettingsRtCall, backSubItemRenderFn, "Settings"
 const PROGMEM SubMenuInfo minfoSettings = { "Settings", 17, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackSettings(fnSettingsRtCall, &menuWarnAt);
 SubMenuItem menuSettings(&minfoSettings, &menuBackSettings, NULL);
-const char enumStrMode_0[] PROGMEM = "Meter";
+const char enumStrMode_0[] PROGMEM = "Interceptor";
 const char enumStrMode_1[] PROGMEM = "Alarm";
-const char enumStrMode_2[] PROGMEM = "Interceptor";
+const char enumStrMode_2[] PROGMEM = "Meter";
 const char* const enumStrMode[] PROGMEM  = { enumStrMode_0, enumStrMode_1, enumStrMode_2 };
 const PROGMEM EnumMenuInfo minfoMode = { "Mode", 18, 0xffff, 2, onModeChange, enumStrMode };
 EnumMenuItem menuMode(&minfoMode, 0, &menuSettings);
