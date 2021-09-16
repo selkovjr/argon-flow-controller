@@ -6,15 +6,8 @@
 
 #include "Display.h"
 
-#define SCREEN_WIDTH 128 //pixel width
-#define SCREEN_HEIGHT 128 //pixel height
-
 void setup() {
-  // display.setFont(&FreeSansOblique12pt7b);
-  display.begin();
-  display.setRotation(2);
-  display.fillScreen(BLACK);
-
+  Display::setup();
   setupMenu();
 }
 
