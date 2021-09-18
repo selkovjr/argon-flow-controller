@@ -35,5 +35,6 @@ extern const uint16_t face_icon[];
 
 namespace Display {
   void setup();
-  void draw();
+  void draw(char *);
+  void drawBackground();
 }

@@ -117,21 +117,6 @@
     },
     {
       "parentId": 25,
-      "type": "boolItem",
-      "item": {
-        "naming": "YES_NO",
-        "name": "Enable",
-        "variableName": "TalkEnable",
-        "id": 26,
-        "eepromAddress": -1,
-        "functionName": "onTalkEnableChange",
-        "readOnly": false,
-        "localOnly": false,
-        "visible": true
-      }
-    },
-    {
-      "parentId": 25,
       "type": "analogItem",
       "item": {
         "maxValue": 60,
@@ -143,6 +128,39 @@
         "id": 27,
         "eepromAddress": -1,
         "functionName": "onTalkIntervalChange",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 25,
+      "type": "enumItem",
+      "item": {
+        "enumEntries": [
+          "Ar flows",
+          "while welding",
+          "never"
+        ],
+        "name": "When",
+        "variableName": "When",
+        "id": 30,
+        "eepromAddress": -1,
+        "functionName": "onTalkConditionChange",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true
+      }
+    },
+    {
+      "parentId": 0,
+      "type": "actionMenu",
+      "item": {
+        "name": "Back to work",
+        "variableName": "BackToWork",
+        "id": 31,
+        "eepromAddress": -1,
+        "functionName": "onBackToWork",
         "readOnly": false,
         "localOnly": false,
         "visible": true

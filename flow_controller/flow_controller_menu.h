@@ -26,8 +26,9 @@ extern GraphicsDeviceRenderer renderer;
 
 // Global Menu Item exports
 
+extern ActionMenuItem menuBackToWork;
+extern EnumMenuItem menuWhen;
 extern AnalogMenuItem menutalkInterval;
-extern BooleanMenuItem menuTalkEnable;
 extern BackMenuItem menuBackTalk;
 extern SubMenuItem menuTalk;
 extern EnumMenuItem menuTriggerMode;
@@ -44,8 +45,9 @@ inline MenuItem& rootMenuItem() { return menuMode; }
 #define CALLBACK_FUNCTION
 
 void CALLBACK_FUNCTION onCutOffLevelChange(int id);
+void CALLBACK_FUNCTION onBackToWork(int id);
 void CALLBACK_FUNCTION onModeChange(int id);
-void CALLBACK_FUNCTION onTalkEnableChange(int id);
+void CALLBACK_FUNCTION onTalkConditionChange(int id);
 void CALLBACK_FUNCTION onTalkIntervalChange(int id);
 void CALLBACK_FUNCTION onTriggerModeChange(int id);
 void CALLBACK_FUNCTION onWarningLevelChange(int id);

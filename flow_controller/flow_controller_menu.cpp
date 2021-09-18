@@ -20,13 +20,19 @@ GraphicsDeviceRenderer renderer(30, applicationInfo.name, &displayDrawable);
 
 // Global Menu Item declarations
 
+const PROGMEM AnyMenuInfo minfoBackToWork = { "Back to work", 31, 0xffff, 0, onBackToWork };
+ActionMenuItem menuBackToWork(&minfoBackToWork, NULL);
+const char enumStrWhen_0[] PROGMEM = "Ar flows";
+const char enumStrWhen_1[] PROGMEM = "while welding";
+const char enumStrWhen_2[] PROGMEM = "never";
+const char* const enumStrWhen[] PROGMEM  = { enumStrWhen_0, enumStrWhen_1, enumStrWhen_2 };
+const PROGMEM EnumMenuInfo minfoWhen = { "When", 30, 0xffff, 2, onTalkConditionChange, enumStrWhen };
+EnumMenuItem menuWhen(&minfoWhen, 0, NULL);
 const PROGMEM AnalogMenuInfo minfotalkInterval = { "Interval", 27, 0xffff, 60, onTalkIntervalChange, 10, 1, "s" };
-AnalogMenuItem menutalkInterval(&minfotalkInterval, 0, NULL);
-const PROGMEM BooleanMenuInfo minfoTalkEnable = { "Enable", 26, 0xffff, 1, onTalkEnableChange, NAMING_YES_NO };
-BooleanMenuItem menuTalkEnable(&minfoTalkEnable, false, &menutalkInterval);
+AnalogMenuItem menutalkInterval(&minfotalkInterval, 0, &menuWhen);
 RENDERING_CALLBACK_NAME_INVOKE(fnTalkRtCall, backSubItemRenderFn, "Talk", -1, NO_CALLBACK)
 const PROGMEM SubMenuInfo minfoTalk = { "Talk", 25, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackTalk(fnTalkRtCall, &menuTalkEnable);
+BackMenuItem menuBackTalk(fnTalkRtCall, &menutalkInterval);
 SubMenuItem menuTalk(&minfoTalk, &menuBackTalk, NULL);
 const char enumStrTriggerMode_0[] PROGMEM = "T2";
 const char enumStrTriggerMode_1[] PROGMEM = "T4";
@@ -57,7 +63,7 @@ EnumMenuItem menuWarnAt(&minfoWarnAt, 0, &menuCutOffLevel);
 RENDERING_CALLBACK_NAME_INVOKE(fnSettingsRtCall, backSubItemRenderFn, "Settings", -1, NO_CALLBACK)
 const PROGMEM SubMenuInfo minfoSettings = { "Settings", 17, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackSettings(fnSettingsRtCall, &menuWarnAt);
-SubMenuItem menuSettings(&minfoSettings, &menuBackSettings, NULL);
+SubMenuItem menuSettings(&minfoSettings, &menuBackSettings, &menuBackToWork);
 const char enumStrMode_0[] PROGMEM = "Interceptor";
 const char enumStrMode_1[] PROGMEM = "Alarm";
 const char enumStrMode_2[] PROGMEM = "Meter";
