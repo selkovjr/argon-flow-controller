@@ -8,6 +8,7 @@
 #include "FlowMeterRenderer.h"
 
 void setup() {
+  Serial.begin(115200);
   Display::setup();
   setupMenu();
   renderer.setCustomDrawingHandler(&flowMeterRenderer);

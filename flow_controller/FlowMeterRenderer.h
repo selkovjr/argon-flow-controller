@@ -1,6 +1,5 @@
 #include <BaseRenderers.h>
 #include "flow_controller_menu.h"
-#include "LibPrintf.h"
 
 // https://www.thecoderscorner.com/products/arduino-libraries/tc-menu/renderer-take-over-display
 
@@ -36,11 +35,11 @@ class FlowMeterRenderer : public CustomDrawing {
       // menuAnalogToAlter.setCurrentValue(encoderValue);
       char buf[50];
 
-      if (userClick) {
+      if (userClick == 1) {
         renderer.giveBackDisplay();
       }
       else {
-        sprintf(buf, "encoder: %d, press: %d\n", encoderValue, userClick);
+        sprintf(buf, "encoder: %d\n", encoderValue, userClick);
         Display::draw(buf);
       }
     }

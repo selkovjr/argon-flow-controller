@@ -5,8 +5,11 @@
 #include "Adafruit_SSD1351.h" // Includes hardware specific library
 #include <Fonts/FreeSansOblique12pt7b.h>
 
-#include "face-icon.c"
-extern const uint16_t face_icon[];
+#define __ATMEGA__
+#define USTD_FEATURE_MEM_8K
+#include "ustd_map.h"
+
+#include "dial_face.h"
 
 #define SCREEN_WIDTH 128 //pixel width
 #define SCREEN_HEIGHT 128 //pixel height
