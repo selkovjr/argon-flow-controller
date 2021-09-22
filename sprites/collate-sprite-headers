@@ -1,0 +1,88 @@
+#!/usr/bin/env perl6
+
+# header {{{1
+v6;
+use fatal;
+#}}}
+
+# Collect bitmap arrays from *.h files produced by png2c and construct an index
+# of sprites that will need to be refreshed (the non-blank ones) and their
+# co-ordinates. Sprite co-ordiates are encoded in PNG metadata. See the
+# Makefile for how th𝑒 sprite data are generated.
+#
+sub MAIN () {
+  CONTROL {
+    when CX::Warn {
+      note $_;
+      exit 1;
+    }
+  }
+
+  my @sprite;  # sprite index with co-ordinates
+  my @bitmaps; # non-blank sprite bitmaps
+  print q:to/END/;
+  const uint16_t sprite_bitmap[][64] PROGMEM={
+    {}, // Zero-index placeholder used to mark non-updatable sprites. The top left sprite assumed blank.
+  END
+
+  # The serial number of a non-blank sprite. Serves as an index.
+  # Start with 1 becaus𝑒 the null sprite is at 0.
+  my $non-blank-index = 1;
+
+  for qq:x{ls *.sprite.png | sort -V}.lines -> $png { # dial_face_82.sprite.png
+    my $name = $png.split('.')[0];                    # dial_face_82
+    my (Any, Any, $index) = $name.split: '_';         # 82
+    # $index enumerates all sprites.
+
+    # dial_face_82.sprite.png PNG 8x8 128x128+16+40 8-bit sRGB 316B 0.000u 0:00.000
+    my $buf = qq:x{identify $png}.split(' ')[3]; #  128x128+16+40
+    my (Any, $x, $y) = $buf.split('+');          #  16, 40
+
+    # Double \n's separate comments, PROGMEM macros, and data. We are only
+    # interested in the data part. The data for an 8x8 sprite might look like this:
+    #
+    # const uint16_t dial_face_84[64] PROGMEM={
+    #   0x11A8, 0x663F, 0x4456, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x555B, 0x557B, 0x0021, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x663F, 0x11C9, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x3372, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    #   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+    # };
+    #
+    my (Any, Any, $data) = "$name.h".IO.slurp.split("\n\n");
+
+    my @matches = $data ~~ m:g/0x0000/;
+    if @matches < 64 {  # select non-blank sprites
+      # Store non-blank data in @bitmaps
+      my @data = $data.split('=')[1].split("\n").map({"  $_"});
+      @data[0] = '  {  // ' ~ "$name.png";
+      @bitmaps.push: @data.join("\n").chop;
+
+      # Store sprite co-ordinates and bitmap indices in @sprite
+      @sprite[$index] = {x => $x, y => $y, index => $non-blank-index++};
+    }
+    else {
+      # Assigne zero index (no data) to blank sprites
+      @sprite[$index] = {x => $x, y => $y, index => 0};
+    }
+  }
+  say @bitmaps.join: ",\n";
+  say q:to/END/;
+  };
+  END
+
+  # Append the index
+  print "const struct \{uint8_t x; uint8_t y; uint8_t index;\} sprite[256] = \{\n  ";
+  for @sprite.kv -> $i, $s {
+    my $delim = ', ';
+    $delim = ",\n  " when ($i + 1) % 4 == 0;
+    $delim = "\n" when $i == 255;
+    print "\{$s<x>, $s<y>, $s<index>\}$delim";
+  }
+  print q:to/END/;
+  };
+  END
+}

@@ -5,9 +5,6 @@
 #include "Adafruit_SSD1351.h" // Includes hardware specific library
 #include <Fonts/FreeSansOblique12pt7b.h>
 
-#define __ATMEGA__
-#define USTD_FEATURE_MEM_8K
-#include "ustd_map.h"
 
 #include "dial_face.h"
 

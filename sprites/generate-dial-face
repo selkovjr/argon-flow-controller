@@ -107,5 +107,5 @@ sub MAIN () {
   }
   say q/fill dodgerblue text 60,96 "cfh"/;
 
-  say "fill gray10 stroke gray10 circle %display<center><x>,%display<center><y> {%display<center><x> + 9},%display<center><y>";
+  say "fill gray5 stroke gray5 circle %display<center><x>,%display<center><y> {%display<center><x> + 9},%display<center><y>";
 }
