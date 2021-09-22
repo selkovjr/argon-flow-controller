@@ -13,7 +13,7 @@ void setup() {
   setupMenu();
   renderer.setCustomDrawingHandler(&flowMeterRenderer);
   renderer.takeOverDisplay();
-  switches.changeEncoderPrecision(30, 8);
+  switches.changeEncoderPrecision(80, 0);
 }
 
 void loop() {
@@ -47,7 +47,7 @@ void CALLBACK_FUNCTION onTriggerModeChange(int id) {
 
 void CALLBACK_FUNCTION onBackToWork(int id) {
   renderer.takeOverDisplay();
-  switches.changeEncoderPrecision(30, 8);
+  switches.changeEncoderPrecision(80, 0);
   Display::drawBackground();
 }
 

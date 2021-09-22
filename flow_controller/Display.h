@@ -36,5 +36,6 @@
 namespace Display {
   void setup();
   void draw(char *);
+  void draw_needle(int);
   void drawBackground();
 }

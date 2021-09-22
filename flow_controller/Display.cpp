@@ -67,8 +67,17 @@ namespace Display {
     // display.print(++count);
     // display.setCursor(0, 40);
 
-    sprintf(msg, "m: %d", freeMemory());
+    // sprintf(msg, "m: %d", freeMemory());
     //display.print(msg);
     strcpy(buf, msg);
+  }
+
+  void draw_needle(int value) {
+    // outer radius = 43
+    int radius = 48;
+    float angle = (2 * 3.14159 / 360) * (120 + 300 * value / 80);
+    display.drawLine(64 + 11 * cos(angle), 64 + 11 * sin(angle), 64 + radius * cos(angle), 64 + radius * sin(angle), RED);
+    display.drawLine(64 + sin(angle) + 11 * cos(angle), 64 + cos(angle) + 11 * sin(angle), 64 + sin(angle) + radius * cos(angle), 64 + cos(angle) + radius * sin(angle), RED);
+    display.drawLine(64 - sin(angle) + 11 * cos(angle), 64 - cos(angle) + 11 * sin(angle), 64 - sin(angle) + radius * cos(angle), 64 - cos(angle) + radius * sin(angle), RED);
   }
 }

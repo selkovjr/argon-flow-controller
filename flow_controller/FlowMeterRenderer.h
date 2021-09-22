@@ -13,7 +13,7 @@ class FlowMeterRenderer : public CustomDrawing {
       // take over the display
       Display::drawBackground();
       renderer.takeOverDisplay();
-      switches.changeEncoderPrecision(30, 8);
+      switches.changeEncoderPrecision(80, 0);
     }
 
     void started(BaseMenuRenderer* currentRenderer) override {
@@ -38,9 +38,14 @@ class FlowMeterRenderer : public CustomDrawing {
       if (userClick == 1) {
         renderer.giveBackDisplay();
       }
-      else {
-        sprintf(buf, "encoder: %d\n", encoderValue, userClick);
+      else if (userClick == 2) {
+        sprintf(buf, "alarm: %d\n", encoderValue);
         Display::draw(buf);
+      }
+      else {
+        sprintf(buf, "sp: %d\n", encoderValue);
+        Display::draw(buf);
+        Display::draw_needle(encoderValue);
       }
     }
 } flowMeterRenderer;
