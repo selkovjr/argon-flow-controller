@@ -59,7 +59,7 @@ namespace Display {
   struct tile_coord {int x; int y;};
 
   void setup();
-  void draw(char *);
+  void renderText(char *);
   point rotate_point(point, float);
   uint8_t point_to_tile(uint8_t, uint8_t);
   uint8_t pixel_to_tile(uint8_t);

@@ -45,11 +45,11 @@ class FlowMeterRenderer : public CustomDrawing {
       }
       else if (userClick == 2) {
         sprintf(buf, "alarm: %d\n", encoderValue);
-        Display::draw(buf);
+        Display::renderText(buf);
       }
       else {
         sprintf(buf, "sp: %d\n", encoderValue);
-        Display::draw(buf);
+        Display::renderText(buf);
         Display::draw_needle(encoderValue);
       }
     }

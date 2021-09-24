@@ -44,7 +44,7 @@ namespace Display {
     }
   }
 
-  void draw(char *msg) {
+  void renderText(char *msg) {
     display.setTextColor(BLACK);
     display.setCursor(0, 2);
     // display.print(count);
@@ -65,6 +65,12 @@ namespace Display {
 
   }
 
+  // Draw the dial guage needle pointing at the value supplied. Presently, the
+  // value value represents the number of 1/80th steps on the dial.
+  //
+  // This function runs 25 .. 35ms, depending on the previous and current
+  // position of the needle.
+  //
   void draw_needle(int value) {
 
     if (value == previous_value) {
@@ -108,13 +114,19 @@ namespace Display {
     end = rotate_point({CENTER_X + outer_radius, CENTER_Y + 2}, angle);
     supercover_line(start.x, start.y, end.x, end.y);
 
+    /* 2ms from the start of the function */
+
     // Re-render sprites touched by the needle in previous position. The ones
     // needing update are marked by a boolean true value in the tile[] array.
+    //
+    // With 8x8 tiles, 6 .. 12 tiles are updated with each needle rotation.
+    // The average number of dirty tiles is 10. It takes 20 .. 30ms to update a
+    // typical combination of sprites and blank tiles.
     //
     for (int i = 0; i < 256; i++) {
       if (tile[i]) {  // needs update
         if (sprite[i].index) {  // i-th tile is a sprite
-          display.drawRGBBitmap(
+          display.drawRGBBitmap(  /* 2.7 ms */
             sprite[i].x,
             sprite[i].y,
             sprite_bitmap[sprite[i].index],
@@ -123,11 +135,15 @@ namespace Display {
           );
         }
         else {  // it is a blank tile
+          /* 310µs to run this block */
+          unsigned long startTime = micros();
           uint16_t x0 = (TILE_SIZE * i) % SCREEN_WIDTH;
           uint16_t y0 = TILE_SIZE * (i / (SCREEN_HEIGHT / TILE_SIZE));
           uint16_t x1 = x0 + TILE_SIZE - 1;
           uint16_t y1 = y0 + TILE_SIZE - 1;
           display.fillRect(x0, y0, TILE_SIZE, TILE_SIZE, BLACK);
+          unsigned long elapsed = micros() - startTime;
+          sprintf(global_msg, "%d", elapsed);
         }
       }
     }
@@ -138,7 +154,9 @@ namespace Display {
     // Now the needle points at this angle:
     angle = (2 * 3.14159 / 360) * (120 + 300 * value / 80);  // 300: angular scale size; 80; number of steps
 
-    // Render the needle in current position using three parallel lines for thickness.
+    // Render the needle in current position using three parallel lines for
+    // thickness. It takes 5 .. 7ms.
+    //
     start = rotate_point({CENTER_X + inner_radius, CENTER_Y - 1}, angle);
     end = rotate_point({CENTER_X + outer_radius, CENTER_Y - 1}, angle);
     display.drawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, RED);
@@ -172,6 +190,11 @@ namespace Display {
 
   // after https://www.redblobgames.com/grids/line-drawing.html
   void supercover_line(uint8_t p0x, uint8_t p0y, uint8_t p1x, uint8_t p1y) {
+    // This routine can be optimized by converting pixels to tiles and drawing
+    // the line over them as if they were pixels. That could easily reduce
+    // compute time from 200µs to less than 20µs. However, it will be difficult
+    // to appreciate the savings given the 30ms render time of the needle.
+    //
     int8_t dx = p1x - p0x, dy = p1y - p0y;
     uint8_t nx = abs(dx), ny = abs(dy);
     int8_t sign_x = dx > 0 ? 1 : -1, sign_y = dy > 0 ? 1 : -1;
