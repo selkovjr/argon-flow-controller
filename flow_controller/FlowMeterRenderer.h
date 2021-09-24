@@ -12,16 +12,21 @@ class FlowMeterRenderer : public CustomDrawing {
       // of a timeout of the user interface for example to
       // take over the display
       Display::drawBackground();
+      Display::draw_needle(0);  // fetch the current value
       renderer.takeOverDisplay();
       switches.changeEncoderPrecision(80, 0);
     }
 
     void started(BaseMenuRenderer* currentRenderer) override {
-      // // take over display has just been called, and we
-      // // now need to do any initial activity
-      // // for example here we may clear the display and
-      // // print the title
+      // take over display has just been called, and we
+      // now need to do any initial activity
+      // for example here we may clear the display and
+      // print the title
+      //
+      // Not running drawBackground() here results in
+      // menu rendering itself on top or pre-existing background.
       Display::drawBackground();
+      Display::draw_needle(0);  // fetch the current value
     }
 
     void renderLoop(unsigned int encoderValue, RenderPressMode userClick) override {

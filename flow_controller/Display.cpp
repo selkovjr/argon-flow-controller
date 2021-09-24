@@ -26,8 +26,7 @@ namespace Display {
     // display.setFont(&FreeSansOblique12pt7b);  // tc-menu sets the font it likes
     display.begin();
     display.setRotation(2);
-    drawBackground();
-    //draw_needle(0);  // Retrieve saved value here
+    // drawBackground();
   }
 
   void drawBackground () {

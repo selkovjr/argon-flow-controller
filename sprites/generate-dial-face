@@ -36,7 +36,7 @@ sub MAIN () {
     },
     cfh => {
       full-arc => 300 × 18.88 ÷ 20,  # degrees 18.88 is 40cfh converted to lpm
-      radius => 39,
+      radius => 38,
       max => 40,
       major-tick-length => 5,
       label => qw/0 10 20 30 40/,
@@ -79,7 +79,7 @@ sub MAIN () {
       }
     }
   }
-  say q/fill aquamarine text 56,117 "lpm"/;
+  say q/fill aquamarine text 55,117 "lpm"/;
 
   for  0 .. 4 -> $i {  # 4 divisions
     # Absolute major tick angle
@@ -105,7 +105,7 @@ sub MAIN () {
       say "stroke dodgerblue line {$x1.round},{$y1.round} {$x2.round},{$y2.round}";
     }
   }
-  say q/fill dodgerblue text 60,96 "cfh"/;
+  say q/fill dodgerblue text 59,95 "cfh"/;
 
   say "fill gray5 stroke gray5 circle %display<center><x>,%display<center><y> {%display<center><x> + 9},%display<center><y>";
 }
