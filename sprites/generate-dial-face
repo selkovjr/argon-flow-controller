@@ -20,7 +20,7 @@ sub MAIN () {
   ;
   %display<center> = {
     x => %display<width> ÷ 2,
-    y => %display<height> ÷ 2
+    y => %display<height> ÷ 2 + 4
   };
 
   my %gauge =
@@ -31,7 +31,7 @@ sub MAIN () {
       major-tick-length => 6,
       label => qw/0 5 10 15 20/,
       x => (-10, -14, -7, 5,  3),
-      y => ( 15,  1,  -9, 1, 15),
+      y => ( 16,  1,  -9, 1, 16),
       color => 'MidnightBlue'
     },
     cfh => {
@@ -42,29 +42,34 @@ sub MAIN () {
       label => qw/0 10 20 30 40/,
       x => ( 1, 5, -5, -20, -12),
       y => (-6, 4, 15,   8,  -6),
-      color => 'rgb( 4, 0, 45)'
+      color => 'rgb( 4, 0, 54)'
     }
   ;
 
 
 
+  # 1. Draw scales
+  #
   # This leaves an opening of 60° at the bottom. The arc is drawn CW from 120° to 60°.
   say "stroke %gauge<lpm><color> ellipse %display<center><x>,%display<center><y> %gauge<lpm><radius>,%gauge<lpm><radius> 120,60";
 
   # The CFH scale is shorter
   say "stroke %gauge<cfh><color> ellipse %display<center><x>,%display<center><y> %gauge<cfh><radius>,%gauge<cfh><radius> 120,{((%gauge<cfh><full-arc> + 120) % 360).Int}";
 
+
+  # 2. Draw LPM ticks
+  #
   for  0 .. 4 -> $i {  # 4 divisions
     # Absolute major tick angle (starting 120°)
     my $α = (2 × π ÷ 360) × (120 + $i × (%gauge<lpm><full-arc> ÷ 4));
 
     my $x1 = %display<center><x> + %gauge<lpm><radius> × cos($α);
-    my $y1 = %display<center><x> + %gauge<lpm><radius> × sin($α);
+    my $y1 = %display<center><y> + %gauge<lpm><radius> × sin($α);
     my $x2 = %display<center><x> + (%gauge<lpm><radius> + %gauge<lpm><major-tick-length>) × cos($α);
-    my $y2 = %display<center><x> + (%gauge<lpm><radius> + %gauge<lpm><major-tick-length>) × sin($α);
+    my $y2 = %display<center><y> + (%gauge<lpm><radius> + %gauge<lpm><major-tick-length>) × sin($α);
     $y2++ if $i ∈ (1, 3);  # unpleasant rounding error
     say "stroke %gauge<lpm><color> line {$x1.round},{$y1.round} {$x2.round},{$y2.round}";
-    say qq/fill %gauge<lpm><color> text {($x1 + %gauge<lpm><x>[$i]).round},{($y1 + %gauge<lpm><y>[$i]).round} "{%gauge<lpm><label>[$i]}"/;
+    say qq/stroke %gauge<lpm><color> text {($x1 + %gauge<lpm><x>[$i]).round},{($y1 + %gauge<lpm><y>[$i]).round} "{%gauge<lpm><label>[$i]}"/;
 
     # Minor ticks
     if $i < 4 { # don't divide the gap at the bottom
@@ -72,26 +77,28 @@ sub MAIN () {
         # relative minor tick angle within a division
         my $β = $j × (2 × π ÷ 360) × (%gauge<lpm><full-arc> ÷ 4 ÷ 5); # 4 major divisions, 5 minor
         my $x1 = %display<center><x> + %gauge<lpm><radius> × cos($α + $β);
-        my $y1 = %display<center><x> + %gauge<lpm><radius> × sin($α + $β);
+        my $y1 = %display<center><y> + %gauge<lpm><radius> × sin($α + $β);
         my $x2 = %display<center><x> + (%gauge<lpm><radius> + %gauge<lpm><major-tick-length> ÷ 2) × cos($α + $β);
-        my $y2 = %display<center><x> + (%gauge<lpm><radius> + %gauge<lpm><major-tick-length> ÷ 2) × sin($α + $β);
+        my $y2 = %display<center><y> + (%gauge<lpm><radius> + %gauge<lpm><major-tick-length> ÷ 2) × sin($α + $β);
         say "stroke %gauge<lpm><color> line {$x1.round},{$y1.round} {$x2.round},{$y2.round}";
       }
     }
   }
-  say qq/fill %gauge<lpm><color> text 55,117 "lpm"/;
+  say qq/stroke %gauge<lpm><color> text 55,117 "lpm"/;
 
+  # 2. Draw CFH ticks
+  #
   for  0 .. 4 -> $i {  # 4 divisions
     # Absolute major tick angle
     my $α = (2 × π ÷ 360) × (-60 + $i × (%gauge<cfh><full-arc> ÷ 4));  # Oddly, what was 120° for the larger arc is -60° here
 
     my $x1 = %display<center><x> - %gauge<cfh><radius> × cos($α);
-    my $y1 = %display<center><x> - %gauge<cfh><radius> × sin($α);
+    my $y1 = %display<center><y> - %gauge<cfh><radius> × sin($α);
     my $x2 = %display<center><x> - (%gauge<cfh><radius> - %gauge<cfh><major-tick-length>) × cos($α);
-    my $y2 = %display<center><x> - (%gauge<cfh><radius> - %gauge<cfh><major-tick-length>) × sin($α);
+    my $y2 = %display<center><y> - (%gauge<cfh><radius> - %gauge<cfh><major-tick-length>) × sin($α);
     # $y2 += 1 if $i == 1;
     say "stroke %gauge<cfh><color> line {$x1.round},{$y1.round} {$x2.round},{$y2.round}";
-    say qq/fill %gauge<cfh><color> text {($x1 + %gauge<cfh><x>[$i]).round},{($y1 + %gauge<cfh><y>[$i]).round} "{%gauge<cfh><label>[$i]}"/;
+    say qq/stroke %gauge<cfh><color> text {($x1 + %gauge<cfh><x>[$i]).round},{($y1 + %gauge<cfh><y>[$i]).round} "{%gauge<cfh><label>[$i]}"/;
 
     # Minor ticks
     if $i < 4 {
@@ -99,13 +106,14 @@ sub MAIN () {
       # relative minor tick angle within a division
       my $β = $j × (2 × π ÷ 360) × (%gauge<cfh><full-arc> ÷ 4 ÷ 2); # 4 major divisions, 2 minor
       my $x1 = %display<center><x> - %gauge<cfh><radius> × cos($α + $β);
-      my $y1 = %display<center><x> - %gauge<cfh><radius> × sin($α + $β);
+      my $y1 = %display<center><y> - %gauge<cfh><radius> × sin($α + $β);
       my $x2 = %display<center><x> - (%gauge<cfh><radius> - %gauge<cfh><major-tick-length> ÷ 2) × cos($α + $β);
-      my $y2 = %display<center><x> - (%gauge<cfh><radius> - %gauge<cfh><major-tick-length> ÷ 2) × sin($α + $β);
+      my $y2 = %display<center><y> - (%gauge<cfh><radius> - %gauge<cfh><major-tick-length> ÷ 2) × sin($α + $β);
       say "stroke %gauge<cfh><color> line {$x1.round},{$y1.round} {$x2.round},{$y2.round}";
     }
   }
-  say qq/fill %gauge<cfh><color> text 59,95 "cfh"/;
+  say qq/stroke %gauge<cfh><color> text 59,95 "cfh"/;
 
-  say "fill rgb(3, 3, 3) stroke rgb(3, 3, 3) circle %display<center><x>,%display<center><y> {%display<center><x> + 9},%display<center><y>";
+  say "fill rgb(4, 4, 4) stroke rgb(4, 4, 4) circle %display<center><x>,%display<center><y> {%display<center><x> + 9},%display<center><y>";
+
 }

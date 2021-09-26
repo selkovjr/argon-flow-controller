@@ -42,6 +42,12 @@ namespace Display {
         );
       }
     }
+
+    display.drawRGBBitmap(86, 1, trigger_state_t4p1, 45, 16);
+    // display.drawLine(0, 0, 0, 127, RED);
+    // display.drawLine(0, 127, 127, 127, RED);
+    // display.drawLine(127, 127, 127, 0, RED);
+    // display.drawLine(127, 0, 0, 0, RED);
   }
 
   void renderText(char *msg) {
@@ -106,12 +112,12 @@ namespace Display {
     // occasional false negatives due to rounding errors. This arrangement
     // guarantees that the four central sprites are always redrawn.
     //
-    start = rotate_point({CENTER_X + inner_radius - 3, CENTER_Y - 2}, angle);
-    end = rotate_point({CENTER_X + outer_radius, CENTER_Y - 2}, angle);
+    start = rotate_point({FG_CENTER_X + inner_radius - 3, FG_CENTER_Y - 2}, angle);
+    end = rotate_point({FG_CENTER_X + outer_radius + 1, FG_CENTER_Y - 2}, angle);
     supercover_line(start.x, start.y, end.x, end.y);
 
-    start = rotate_point({CENTER_X + inner_radius - 3, CENTER_Y + 2}, angle);
-    end = rotate_point({CENTER_X + outer_radius, CENTER_Y + 2}, angle);
+    start = rotate_point({FG_CENTER_X + inner_radius - 3, FG_CENTER_Y + 2}, angle);
+    end = rotate_point({FG_CENTER_X + outer_radius + 1, FG_CENTER_Y + 2}, angle);
     supercover_line(start.x, start.y, end.x, end.y);
 
     /* 2ms from the start of the function */
@@ -157,16 +163,16 @@ namespace Display {
     // Render the needle in current position using three parallel lines for
     // thickness. It takes 5 .. 7ms.
     //
-    start = rotate_point({CENTER_X + inner_radius, CENTER_Y - 1}, angle);
-    end = rotate_point({CENTER_X + outer_radius, CENTER_Y - 1}, angle);
+    start = rotate_point({FG_CENTER_X + inner_radius, FG_CENTER_Y - 1}, angle);
+    end = rotate_point({FG_CENTER_X + outer_radius, FG_CENTER_Y - 1}, angle);
     display.drawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, RED);
 
-    start = rotate_point({CENTER_X + inner_radius, CENTER_Y}, angle);
-    end = rotate_point({CENTER_X + outer_radius, CENTER_Y}, angle);
+    start = rotate_point({FG_CENTER_X + inner_radius, FG_CENTER_Y}, angle);
+    end = rotate_point({FG_CENTER_X + outer_radius, FG_CENTER_Y}, angle);
     display.drawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, RED);
 
-    start = rotate_point({CENTER_X + inner_radius, CENTER_Y + 1}, angle);
-    end = rotate_point({CENTER_X + outer_radius, CENTER_Y + 1}, angle);
+    start = rotate_point({FG_CENTER_X + inner_radius, FG_CENTER_Y + 1}, angle);
+    end = rotate_point({FG_CENTER_X + outer_radius, FG_CENTER_Y + 1}, angle);
     display.drawLine((int)start.x, (int)start.y, (int)end.x, (int)end.y, RED);
   }
 
@@ -175,16 +181,16 @@ namespace Display {
     float c = cos(angle);
 
     // translate point back to origin:
-    p.x -= CENTER_X;
-    p.y -= CENTER_Y;
+    p.x -= FG_CENTER_X;
+    p.y -= FG_CENTER_Y;
 
     // rotate point
     float xnew = p.x * c - p.y * s;
     float ynew = p.x * s + p.y * c;
 
     // translate point back:
-    p.x = xnew + CENTER_X;
-    p.y = ynew + CENTER_Y;
+    p.x = xnew + FG_CENTER_X;
+    p.y = ynew + FG_CENTER_Y;
     return p;
   }
 

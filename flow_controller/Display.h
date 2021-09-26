@@ -6,6 +6,7 @@
 #include <Fonts/FreeSansOblique12pt7b.h>
 
 #include "dial_face.h"
+#include "trigger_state.h"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 128
@@ -51,8 +52,10 @@ extern char *__brkval;
 
 
 namespace Display {
-  #define CENTER_X 64.5
-  #define CENTER_Y 64.5
+  // Fractional co-ordinates reduce rounding artifacts. With an integer center,
+  // the three lines of the needle do not all start on the same circle.
+  #define FG_CENTER_X 64.5
+  #define FG_CENTER_Y 68.5
   #define TILE_SIZE 8
 
   struct point {float x; float y;};

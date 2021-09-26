@@ -1,0 +1,43 @@
+#!/usr/bin/env perl6
+
+# header {{{1
+v6;
+use fatal;
+#}}}
+
+# Collect bitmap arrays from *.h files produced by png2c
+#
+sub MAIN () {
+  CONTROL {
+    when CX::Warn {
+      note $_;
+      exit 1;
+    }
+  }
+
+  my @bitmaps;
+  for qq:x{ls trigger*.sprite.png | sort -V}.lines -> $png { # trigger_state_t4r2.sprite.png
+    my $name = $png.split('.')[0];                    # trigger_state_t4r2.sprite.png
+
+    # Double \n's separate comments, PROGMEM macros, and data. We are only
+    # interested in the data part. The data for an triggerstate sprite might
+    # look like this:
+    #
+    # const uint16_t trigger_state_t4r2[720] PROGMEM={
+    # 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, ...,
+    # 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, ...,
+    # . . .
+    # 0x0000, 0x05F7, 0x05F7, 0x05F7, 0x05F7, 0x05F7, 0x05F7, 0x05F7, ...,
+    # 0x0000, 0x0186, 0x0186, 0x0186, 0x0186, 0x0186, 0x0186, 0x0186, ...,
+    # 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, ...
+    # };
+    #
+    my (Any, Any, $data) = "$name.h".IO.slurp.split("\n\n");
+
+    my $decl =  $data.split('=')[0] ~ ' { // ' ~ "$name.png";
+    my @data = $data.split('=')[1].split("\n")[1 .. *-1].map({/^ 0x/ ?? "  $_" !! $_});
+    @bitmaps.push: ($decl, @data).flat.join("\n").chop;
+  }
+  say @bitmaps.join: ";\n";
+  print ';';
+}

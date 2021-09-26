@@ -29,7 +29,7 @@ sub MAIN () {
   # Start with 1 becaus𝑒 the null sprite is at 0.
   my $non-blank-index = 1;
 
-  for qq:x{ls *.sprite.png | sort -V}.lines -> $png { # dial_face_82.sprite.png
+  for qq:x{ls dial*.sprite.png | sort -V}.lines -> $png { # dial_face_82.sprite.png
     my $name = $png.split('.')[0];                    # dial_face_82
     my (Any, Any, $index) = $name.split: '_';         # 82
     # $index enumerates all sprites.
