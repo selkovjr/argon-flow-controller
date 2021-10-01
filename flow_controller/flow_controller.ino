@@ -6,9 +6,12 @@
 
 #include "Display.h"
 #include "FlowMeterRenderer.h"
+#include "Trigger.h"
+
 
 void setup() {
   Serial.begin(115200);
+  Trigger::setup();
   Display::setup();
   setupMenu();
   renderer.setCustomDrawingHandler(&flowMeterRenderer);
@@ -42,7 +45,7 @@ void CALLBACK_FUNCTION onTalkIntervalChange(int id) {
 }
 
 void CALLBACK_FUNCTION onTriggerModeChange(int id) {
-  // TODO - your menu change code
+  Trigger::setMode(id);
 }
 
 void CALLBACK_FUNCTION onBackToWork(int id) {

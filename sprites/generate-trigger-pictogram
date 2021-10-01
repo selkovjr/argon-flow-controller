@@ -21,19 +21,45 @@ sub MAIN ($mode!, $state!) {
 
     if $state eq 'p1' {
       $color = 'red';
-      say "stroke $color line 1,10 10,10";
-      say "stroke $color line 1,12 10,12";
+      say "stroke $color line 1.5,10 9.5,10";
+      say "stroke $color line 1.5,12 9.5,12";
     }
     else {
       $color = 'teal';
     }
     say "stroke $color line 1,11 10,11";
 
-    $color = $state eq 'r1' ?? 'red' !! 'teal';
+
+    if $state eq 'r1' {
+      $color = 'red';
+      say "stroke $color line 10.5,7.5 13.5,1.5";
+      say "stroke $color line 11,8 14,2";
+      say "stroke $color line 11.5,8.5 14.5,2.5";
+
+      say "stroke $color line 13.5,1.5 28,1.5";
+      say "stroke $color line 14,2 28,2";
+      say "stroke $color line 14.5,2.5 28,2.5";
+    }
+    else {
+      $color = 'teal';
+    }
     say "stroke $color line 11,8 14,2";
     say "stroke $color line 14,2 28,2";
 
-    $color = $state eq 'p2' ?? 'red' !! 'teal';
+
+    if $state eq 'p2' {
+      $color = 'red';
+      say "stroke $color line 28.5,5.5 31.5,10.5";
+      say "stroke $color line 29,5 32,11";
+      say "stroke $color line 29.8,4.5 32.8,11.5";
+
+      say "stroke $color line 31.5,10.5 42.5,10.5";
+      say "stroke $color line 32,11 42,11";
+      say "stroke $color line 32.5,11.5 42.5,11.5";
+    }
+    else {
+      $color = 'teal';
+    }
     say "stroke $color line 29,5 32,11";
     say "stroke $color line 32,11 42,11";
   }

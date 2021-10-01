@@ -33,19 +33,29 @@ dial_face.scaled.png: dial_face.im
 
 
 
-trigger_state.h: trigger_state_t4r2.h trigger_state_t4p1.h
+trigger_state.h: \
+	trigger_state_t4p1.h \
+	trigger_state_t4r1.h \
+	trigger_state_t4p2.h \
+	trigger_state_t4r2.h \
+
 	./collate-trigger-state-sprite-headers > $@
 	cp $@ ../flow_controller/
 
 trigger_state_%.sprite.png: trigger_state_%.im
 	convert -depth 8 -background black -size 45x16 -strokewidth 1 xc: -font Noto-Sans-ExtraLight -pointsize 10 -set colorspace RGB -draw @"$<" -colorspace sRGB PNG32:$@
 
-trigger_state_t4r2.im: generate-trigger-pictogram
-	./$< t4 r2> $@
-
 trigger_state_t4p1.im: generate-trigger-pictogram
 	./$< t4 p1> $@
 
+trigger_state_t4r1.im: generate-trigger-pictogram
+	./$< t4 r1> $@
+
+trigger_state_t4p2.im: generate-trigger-pictogram
+	./$< t4 p2> $@
+
+trigger_state_t4r2.im: generate-trigger-pictogram
+	./$< t4 r2> $@
 
 
 clean:

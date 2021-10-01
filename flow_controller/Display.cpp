@@ -1,4 +1,5 @@
 #include "Display.h"
+#include "Trigger.h"
 
 // The display variable needs to be global because it is hard-coded into TcMenu
 // (by TcMenu Designer, see flow-controller-menu.emf)
@@ -18,6 +19,7 @@ namespace Display {
   int16_t previous_value = -1;  // to ensure the needle is rendered the first time
 
   unsigned long count = 0;
+  unsigned long last_time = millis();
 
   void setup() {
     memset(tile, 0, sizeof(tile));
@@ -43,7 +45,9 @@ namespace Display {
       }
     }
 
-    display.drawRGBBitmap(86, 1, trigger_state_t4p1, 45, 16);
+    if (strcmp(Trigger::mode, 'T4') == 0) {
+      display.drawRGBBitmap(86, 1, trigger_state_t4r2, 45, 16);
+    }
     // display.drawLine(0, 0, 0, 127, RED);
     // display.drawLine(0, 127, 127, 127, RED);
     // display.drawLine(127, 127, 127, 0, RED);
@@ -51,6 +55,7 @@ namespace Display {
   }
 
   void renderText(char *msg) {
+    // unsigned long current_time = millis();
     display.setTextColor(BLACK);
     display.setCursor(0, 2);
     // display.print(count);
@@ -63,12 +68,30 @@ namespace Display {
     // display.setCursor(0, 40);
 
     // sprintf(msg, "m: %d", freeMemory());
-    display.print(msg);
-    strcpy(buf, msg);
+    // display.print(msg);
+    // strcpy(buf, msg);
 
-    // display.print(global_msg);
-    // strcpy(buf, global_msg);
+    // sprintf(global_msg, "%d", current_time - last_time);
+    // last_time = current_time;
+    sprintf(global_msg, "%d", Trigger::state);
+    display.print(global_msg);
+    strcpy(buf, global_msg);
 
+    if (strcmp(Trigger::mode, 'T4') == 0) {
+      switch(Trigger::state) {
+        case TRIGGER_OFF:
+          display.drawRGBBitmap(86, 1, trigger_state_t4r2, 45, 16);
+          break;
+        case TRIGGER_T4_P1:
+          display.drawRGBBitmap(86, 1, trigger_state_t4p1, 45, 16);
+          break;
+        case TRIGGER_T4_R1:
+          display.drawRGBBitmap(86, 1, trigger_state_t4r1, 45, 16);
+          break;
+        case TRIGGER_T4_P2:
+          display.drawRGBBitmap(86, 1, trigger_state_t4p2, 45, 16);
+      }
+    }
   }
 
   // Draw the dial guage needle pointing at the value supplied. Presently, the

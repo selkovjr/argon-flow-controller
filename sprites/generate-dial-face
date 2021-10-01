@@ -115,5 +115,4 @@ sub MAIN () {
   say qq/stroke %gauge<cfh><color> text 59,95 "cfh"/;
 
   say "fill rgb(4, 4, 4) stroke rgb(4, 4, 4) circle %display<center><x>,%display<center><y> {%display<center><x> + 9},%display<center><y>";
-
 }
