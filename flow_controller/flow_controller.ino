@@ -6,11 +6,13 @@
 
 #include "Display.h"
 #include "FlowMeterRenderer.h"
+#include "Pressure.h"
 #include "Trigger.h"
 
 
 void setup() {
   Serial.begin(115200);
+  Pressure::setup();
   Trigger::setup();
   Display::setup();
   setupMenu();

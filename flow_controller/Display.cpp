@@ -1,5 +1,6 @@
 #include "Display.h"
 #include "Trigger.h"
+#include "Pressure.h"
 
 // The display variable needs to be global because it is hard-coded into TcMenu
 // (by TcMenu Designer, see flow-controller-menu.emf)
@@ -63,7 +64,7 @@ namespace Display {
     // display.setCursor(0, 40);
     display.print(buf);
 
-    display.setTextColor(YELLOW);
+    display.setTextColor(BLUE);
     display.setCursor(0, 2);
     // display.print(++count);
     // display.setCursor(0, 40);
@@ -74,7 +75,9 @@ namespace Display {
 
     // sprintf(global_msg, "%d", current_time - last_time);
     // last_time = current_time;
-    sprintf(global_msg, "%d", Trigger::state);
+    // sprintf(global_msg, "%d", Trigger::state);
+    // dtostrf(Pressure::readPSI(), 5, 1, global_msg);
+    sprintf(global_msg, "%d psi", (int)Pressure::readPSI());
     display.print(global_msg);
     strcpy(buf, global_msg);
 
