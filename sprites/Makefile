@@ -34,6 +34,9 @@ dial_face.scaled.png: dial_face.im
 
 
 trigger_state.h: \
+	trigger_state_t2i.h \
+	trigger_state_t2p.h \
+	trigger_state_t2r.h \
 	trigger_state_t4p1.h \
 	trigger_state_t4r1.h \
 	trigger_state_t4p2.h \
@@ -44,6 +47,15 @@ trigger_state.h: \
 
 trigger_state_%.sprite.png: trigger_state_%.im
 	convert -depth 8 -background black -size 45x16 -strokewidth 1 xc: -font Noto-Sans-ExtraLight -pointsize 10 -set colorspace RGB -draw @"$<" -colorspace sRGB PNG32:$@
+
+trigger_state_t2i.im: generate-trigger-pictogram
+	./$< t2 i > $@
+
+trigger_state_t2p.im: generate-trigger-pictogram
+	./$< t2 p > $@
+
+trigger_state_t2r.im: generate-trigger-pictogram
+	./$< t2 r > $@
 
 trigger_state_t4p1.im: generate-trigger-pictogram
 	./$< t4 p1> $@

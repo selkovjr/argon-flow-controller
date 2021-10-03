@@ -67,6 +67,6 @@ namespace Display {
   uint8_t point_to_tile(uint8_t, uint8_t);
   uint8_t pixel_to_tile(uint8_t);
   void supercover_line(uint8_t, uint8_t, uint8_t, uint8_t);
-  void draw_needle(int);
+  void drawNeedle(int, bool);
   void drawBackground();
 }

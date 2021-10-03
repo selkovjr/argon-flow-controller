@@ -49,9 +49,10 @@ void CALLBACK_FUNCTION onTriggerModeChange(int id) {
 }
 
 void CALLBACK_FUNCTION onBackToWork(int id) {
-  renderer.takeOverDisplay();
+  // Rendering will happen in FlowMeterRenderer::reset() because that function
+  // will be called by takeOverDisplay()
   switches.changeEncoderPrecision(80, 0);
-  Display::drawBackground();
+  renderer.takeOverDisplay();
 }
 
 

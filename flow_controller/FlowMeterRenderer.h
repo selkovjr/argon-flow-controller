@@ -11,8 +11,8 @@ class FlowMeterRenderer : public CustomDrawing {
       // if we get here the display has been reset because
       // of a timeout of the user interface for example to
       // take over the display
-      Display::drawBackground();
-      Display::draw_needle(0);  // fetch the current value
+      // Display::drawBackground();
+      // Display::drawNeedle(0, true);  // fetch the current value
       renderer.takeOverDisplay();
       switches.changeEncoderPrecision(80, 0);
     }
@@ -26,7 +26,7 @@ class FlowMeterRenderer : public CustomDrawing {
       // Not running drawBackground() here results in
       // menu rendering itself on top or pre-existing background.
       Display::drawBackground();
-      Display::draw_needle(0);  // fetch the current value
+      Display::drawNeedle(20, true);  // fetch the current value
     }
 
     void renderLoop(unsigned int encoderValue, RenderPressMode userClick) override {
@@ -50,7 +50,7 @@ class FlowMeterRenderer : public CustomDrawing {
       else {
         sprintf(buf, "sp: %d\n", encoderValue);
         Display::renderText(buf);
-        Display::draw_needle(encoderValue);
+        Display::drawNeedle(encoderValue, false);
       }
     }
 } flowMeterRenderer;

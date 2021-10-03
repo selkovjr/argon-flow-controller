@@ -19,7 +19,8 @@ namespace Display {
   int16_t previous_value = -1;  // to ensure the needle is rendered the first time
 
   unsigned long count = 0;
-  unsigned long last_time = millis();
+  uint8_t t2_rampdown_count = 0;
+  // unsigned long last_time = millis();
 
   void setup() {
     memset(tile, 0, sizeof(tile));
@@ -77,7 +78,27 @@ namespace Display {
     display.print(global_msg);
     strcpy(buf, global_msg);
 
-    if (strcmp(Trigger::mode, 'T4') == 0) {
+    if (strcmp(Trigger::mode, "T2") == 0) {
+      switch(Trigger::state) {
+        case TRIGGER_OFF:
+          display.drawRGBBitmap(86, 1, trigger_state_t2i, 45, 16);  // inactive
+          break;
+        case TRIGGER_T2_P:
+          display.drawRGBBitmap(86, 1, trigger_state_t2p, 45, 16);
+          break;
+        case TRIGGER_T4_R1:
+          if (t2_rampdown_count++ < 2) {
+            display.drawRGBBitmap(86, 1, trigger_state_t2r, 45, 16);
+          }
+          else {
+            display.drawRGBBitmap(86, 1, trigger_state_t2i, 45, 16);  // inactive
+            digitalWrite(13, LOW);
+            t2_rampdown_count = 0;
+            Trigger::state = TRIGGER_OFF;
+          }
+      }
+    }
+    else if (strcmp(Trigger::mode, "T4") == 0) {
       switch(Trigger::state) {
         case TRIGGER_OFF:
           display.drawRGBBitmap(86, 1, trigger_state_t4r2, 45, 16);
@@ -100,9 +121,9 @@ namespace Display {
   // This function runs 25 .. 35ms, depending on the previous and current
   // position of the needle.
   //
-  void draw_needle(int value) {
+  void drawNeedle(int value, bool forceRedraw) {
 
-    if (value == previous_value) {
+    if (!forceRedraw && value == previous_value) {
       return;
     }
 
@@ -171,8 +192,8 @@ namespace Display {
           uint16_t x1 = x0 + TILE_SIZE - 1;
           uint16_t y1 = y0 + TILE_SIZE - 1;
           display.fillRect(x0, y0, TILE_SIZE, TILE_SIZE, BLACK);
-          unsigned long elapsed = micros() - startTime;
-          sprintf(global_msg, "%d", elapsed);
+          // unsigned long elapsed = micros() - startTime;
+          // sprintf(global_msg, "%d", elapsed);
         }
       }
     }
